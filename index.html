@@ -1,0 +1,1406 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/Kemiskinan2020_2.js"></script>
+        <script src="data/Kemiskinan2030_3.js"></script>
+        <script src="data/Stunting2020_4.js"></script>
+        <script src="data/Stunting2030_5.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[-16.965912603819426,93.82070777742507],[12.035129430819476,142.17124505757505]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_CartoLight_0');
+        map.getPane('pane_CartoLight_0').style.zIndex = 400;
+        var layer_CartoLight_0 = L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.pn', {
+            pane: 'pane_CartoLight_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+        });
+        layer_CartoLight_0;
+        map.addLayer(layer_CartoLight_0);
+        map.createPane('pane_F4Map2D_1');
+        map.getPane('pane_F4Map2D_1').style.zIndex = 401;
+        var layer_F4Map2D_1 = L.tileLayer('https://tile1.f4map.com/tiles/f4_2d/{z}/{x}/{y}.png', {
+            pane: 'pane_F4Map2D_1',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+        });
+        layer_F4Map2D_1;
+        map.addLayer(layer_F4Map2D_1);
+        function pop_Kemiskinan2020_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">WADMKK</th>\
+                        <td class="visible-with-data" id="WADMKK">' + (feature.properties['WADMKK'] !== null ? autolinker.link(feature.properties['WADMKK'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Kemiskinan 2020</th>\
+                        <td class="visible-with-data" id="Kemiskinan 2020">' + (feature.properties['Kemiskinan 2020'] !== null ? autolinker.link(feature.properties['Kemiskinan 2020'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Kemiskinan2020_2_0(feature) {
+            if (feature.properties['Kemiskinan 2020'] >= 0.000000 && feature.properties['Kemiskinan 2020'] <= 0.080000 ) {
+                return {
+                pane: 'pane_Kemiskinan2020_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(1,133,113,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Kemiskinan 2020'] >= 0.080000 && feature.properties['Kemiskinan 2020'] <= 0.156000 ) {
+                return {
+                pane: 'pane_Kemiskinan2020_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(128,205,193,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Kemiskinan 2020'] >= 0.156000 && feature.properties['Kemiskinan 2020'] <= 0.280000 ) {
+                return {
+                pane: 'pane_Kemiskinan2020_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(245,245,245,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Kemiskinan 2020'] >= 0.280000 && feature.properties['Kemiskinan 2020'] <= 0.574000 ) {
+                return {
+                pane: 'pane_Kemiskinan2020_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(223,194,125,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Kemiskinan 2020'] >= 0.574000 && feature.properties['Kemiskinan 2020'] <= 1.000000 ) {
+                return {
+                pane: 'pane_Kemiskinan2020_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(166,97,26,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_Kemiskinan2020_2');
+        map.getPane('pane_Kemiskinan2020_2').style.zIndex = 402;
+        map.getPane('pane_Kemiskinan2020_2').style['mix-blend-mode'] = 'normal';
+        var layer_Kemiskinan2020_2 = new L.geoJson(json_Kemiskinan2020_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Kemiskinan2020_2',
+            layerName: 'layer_Kemiskinan2020_2',
+            pane: 'pane_Kemiskinan2020_2',
+            onEachFeature: pop_Kemiskinan2020_2,
+            style: style_Kemiskinan2020_2_0,
+        });
+        bounds_group.addLayer(layer_Kemiskinan2020_2);
+        map.addLayer(layer_Kemiskinan2020_2);
+        function pop_Kemiskinan2030_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">WADMKK</th>\
+                        <td class="visible-with-data" id="WADMKK">' + (feature.properties['WADMKK'] !== null ? autolinker.link(feature.properties['WADMKK'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Kemiskinan 2030</th>\
+                        <td class="visible-with-data" id="Kemiskinan 2030">' + (feature.properties['Kemiskinan 2030'] !== null ? autolinker.link(feature.properties['Kemiskinan 2030'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Kemiskinan2030_3_0(feature) {
+            if (feature.properties['Kemiskinan 2030'] >= 0.000000 && feature.properties['Kemiskinan 2030'] <= 0.008000 ) {
+                return {
+                pane: 'pane_Kemiskinan2030_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(1,133,113,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Kemiskinan 2030'] >= 0.008000 && feature.properties['Kemiskinan 2030'] <= 0.133000 ) {
+                return {
+                pane: 'pane_Kemiskinan2030_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(128,205,193,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Kemiskinan 2030'] >= 0.133000 && feature.properties['Kemiskinan 2030'] <= 0.964000 ) {
+                return {
+                pane: 'pane_Kemiskinan2030_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(245,245,245,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Kemiskinan 2030'] >= 0.964000 && feature.properties['Kemiskinan 2030'] <= 0.978000 ) {
+                return {
+                pane: 'pane_Kemiskinan2030_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(223,194,125,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Kemiskinan 2030'] >= 0.978000 && feature.properties['Kemiskinan 2030'] <= 1.000000 ) {
+                return {
+                pane: 'pane_Kemiskinan2030_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(166,97,26,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_Kemiskinan2030_3');
+        map.getPane('pane_Kemiskinan2030_3').style.zIndex = 403;
+        map.getPane('pane_Kemiskinan2030_3').style['mix-blend-mode'] = 'normal';
+        var layer_Kemiskinan2030_3 = new L.geoJson(json_Kemiskinan2030_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Kemiskinan2030_3',
+            layerName: 'layer_Kemiskinan2030_3',
+            pane: 'pane_Kemiskinan2030_3',
+            onEachFeature: pop_Kemiskinan2030_3,
+            style: style_Kemiskinan2030_3_0,
+        });
+        bounds_group.addLayer(layer_Kemiskinan2030_3);
+        map.addLayer(layer_Kemiskinan2030_3);
+        function pop_Stunting2020_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">WADMKK</th>\
+                        <td class="visible-with-data" id="WADMKK">' + (feature.properties['WADMKK'] !== null ? autolinker.link(feature.properties['WADMKK'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Stunting 2020</th>\
+                        <td class="visible-with-data" id="Stunting 2020">' + (feature.properties['Stunting 2020'] !== null ? autolinker.link(feature.properties['Stunting 2020'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Stunting2020_4_0(feature) {
+            if (feature.properties['Stunting 2020'] >= 0.000000 && feature.properties['Stunting 2020'] <= 0.266200 ) {
+                return {
+                pane: 'pane_Stunting2020_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Stunting 2020'] >= 0.266200 && feature.properties['Stunting 2020'] <= 0.406000 ) {
+                return {
+                pane: 'pane_Stunting2020_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(171,221,164,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Stunting 2020'] >= 0.406000 && feature.properties['Stunting 2020'] <= 0.511200 ) {
+                return {
+                pane: 'pane_Stunting2020_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,191,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Stunting 2020'] >= 0.511200 && feature.properties['Stunting 2020'] <= 0.623200 ) {
+                return {
+                pane: 'pane_Stunting2020_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,174,97,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Stunting 2020'] >= 0.623200 && feature.properties['Stunting 2020'] <= 1.000000 ) {
+                return {
+                pane: 'pane_Stunting2020_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_Stunting2020_4');
+        map.getPane('pane_Stunting2020_4').style.zIndex = 404;
+        map.getPane('pane_Stunting2020_4').style['mix-blend-mode'] = 'normal';
+        var layer_Stunting2020_4 = new L.geoJson(json_Stunting2020_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Stunting2020_4',
+            layerName: 'layer_Stunting2020_4',
+            pane: 'pane_Stunting2020_4',
+            onEachFeature: pop_Stunting2020_4,
+            style: style_Stunting2020_4_0,
+        });
+        bounds_group.addLayer(layer_Stunting2020_4);
+        map.addLayer(layer_Stunting2020_4);
+        function pop_Stunting2030_5(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">WADMKK</th>\
+                        <td class="visible-with-data" id="WADMKK">' + (feature.properties['WADMKK'] !== null ? autolinker.link(feature.properties['WADMKK'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Stunting 2030</th>\
+                        <td class="visible-with-data" id="Stunting 2030">' + (feature.properties['Stunting 2030'] !== null ? autolinker.link(feature.properties['Stunting 2030'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Stunting2030_5_0(feature) {
+            if (feature.properties['Stunting 2030'] >= 0.000000 && feature.properties['Stunting 2030'] <= 0.648000 ) {
+                return {
+                pane: 'pane_Stunting2030_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Stunting 2030'] >= 0.648000 && feature.properties['Stunting 2030'] <= 0.739000 ) {
+                return {
+                pane: 'pane_Stunting2030_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(171,221,164,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Stunting 2030'] >= 0.739000 && feature.properties['Stunting 2030'] <= 0.794000 ) {
+                return {
+                pane: 'pane_Stunting2030_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,191,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Stunting 2030'] >= 0.794000 && feature.properties['Stunting 2030'] <= 0.876000 ) {
+                return {
+                pane: 'pane_Stunting2030_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,174,97,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['Stunting 2030'] >= 0.876000 && feature.properties['Stunting 2030'] <= 1.000000 ) {
+                return {
+                pane: 'pane_Stunting2030_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_Stunting2030_5');
+        map.getPane('pane_Stunting2030_5').style.zIndex = 405;
+        map.getPane('pane_Stunting2030_5').style['mix-blend-mode'] = 'normal';
+        var layer_Stunting2030_5 = new L.geoJson(json_Stunting2030_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Stunting2030_5',
+            layerName: 'layer_Stunting2030_5',
+            pane: 'pane_Stunting2030_5',
+            onEachFeature: pop_Stunting2030_5,
+            style: style_Stunting2030_5_0,
+        });
+        bounds_group.addLayer(layer_Stunting2030_5);
+        map.addLayer(layer_Stunting2030_5);
+        var baseMaps = {};
+        var overlaysTree = [
+            {label: 'Stunting 2030<br /><table><tr><td style="text-align: center;"><img src="legend/Stunting2030_5_006480.png" /></td><td>0 - 0,648</td></tr><tr><td style="text-align: center;"><img src="legend/Stunting2030_5_064807391.png" /></td><td>0,648 - 0,739</td></tr><tr><td style="text-align: center;"><img src="legend/Stunting2030_5_073907942.png" /></td><td>0,739 - 0,794</td></tr><tr><td style="text-align: center;"><img src="legend/Stunting2030_5_079408763.png" /></td><td>0,794 - 0,876</td></tr><tr><td style="text-align: center;"><img src="legend/Stunting2030_5_087614.png" /></td><td>0,876 - 1</td></tr></table>', layer: layer_Stunting2030_5},
+            {label: 'Stunting 2020<br /><table><tr><td style="text-align: center;"><img src="legend/Stunting2020_4_00270.png" /></td><td>0 - 0,27</td></tr><tr><td style="text-align: center;"><img src="legend/Stunting2020_4_0270411.png" /></td><td>0,27 - 0,41</td></tr><tr><td style="text-align: center;"><img src="legend/Stunting2020_4_0410512.png" /></td><td>0,41 - 0,51</td></tr><tr><td style="text-align: center;"><img src="legend/Stunting2020_4_0510623.png" /></td><td>0,51 - 0,62</td></tr><tr><td style="text-align: center;"><img src="legend/Stunting2020_4_06214.png" /></td><td>0,62 - 1</td></tr></table>', layer: layer_Stunting2020_4},
+            {label: 'Kemiskinan 2030<br /><table><tr><td style="text-align: center;"><img src="legend/Kemiskinan2030_3_000080.png" /></td><td>0 - 0,008</td></tr><tr><td style="text-align: center;"><img src="legend/Kemiskinan2030_3_000801331.png" /></td><td>0,008 - 0,133</td></tr><tr><td style="text-align: center;"><img src="legend/Kemiskinan2030_3_013309642.png" /></td><td>0,133 - 0,964</td></tr><tr><td style="text-align: center;"><img src="legend/Kemiskinan2030_3_096409783.png" /></td><td>0,964 - 0,978</td></tr><tr><td style="text-align: center;"><img src="legend/Kemiskinan2030_3_097814.png" /></td><td>0,978 - 1</td></tr></table>', layer: layer_Kemiskinan2030_3},
+            {label: 'Kemiskinan 2020<br /><table><tr><td style="text-align: center;"><img src="legend/Kemiskinan2020_2_00080.png" /></td><td>0 - 0,08</td></tr><tr><td style="text-align: center;"><img src="legend/Kemiskinan2020_2_00801561.png" /></td><td>0,08 - 0,156</td></tr><tr><td style="text-align: center;"><img src="legend/Kemiskinan2020_2_01560282.png" /></td><td>0,156 - 0,28</td></tr><tr><td style="text-align: center;"><img src="legend/Kemiskinan2020_2_02805743.png" /></td><td>0,28 - 0,574</td></tr><tr><td style="text-align: center;"><img src="legend/Kemiskinan2020_2_057414.png" /></td><td>0,574 - 1</td></tr></table>', layer: layer_Kemiskinan2020_2},
+            {label: "F4 Map - 2D", layer: layer_F4Map2D_1},
+            {label: "Carto Light", layer: layer_CartoLight_0},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: false, 
+        });
+        lay.addTo(map);
+		document.addEventListener("DOMContentLoaded", function() {
+            // set new Layers List height which considers toggle icon
+            function newLayersListHeight() {
+                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
+                if (layerScrollbarElement) {
+                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
+                    var originalHeight = layersListElement.style.height 
+                        || window.getComputedStyle(layersListElement).height;
+                    var newHeight = parseFloat(originalHeight) - 50;
+                    layersListElement.style.height = newHeight + 'px';
+                }
+            }
+            var isLayersListExpanded = true;
+            var controlLayersElement = document.querySelector('.leaflet-control-layers');
+            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
+            // toggle Collapsed/Expanded and apply new Layers List height
+            toggleLayerControl.addEventListener('click', function() {
+                if (isLayersListExpanded) {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                } else {
+                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
+                }
+                isLayersListExpanded = !isLayersListExpanded;
+                newLayersListHeight()
+            });	
+			// apply new Layers List height if toggle layerstree
+			if (controlLayersElement) {
+				controlLayersElement.addEventListener('click', function(event) {
+					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
+					if (toggleLayerHeaderPointer) {
+						newLayersListHeight();
+					}
+				});
+			}
+            // Collapsed/Expanded at Start to apply new height
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            // Collapsed touch/small screen
+            var isSmallScreen = window.innerWidth < 650;
+            if (isSmallScreen) {
+                setTimeout(function() {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                    isLayersListExpanded = !isLayersListExpanded;
+                }, 500);
+            }  
+        });       
+        setBounds();
+        map.addControl(new L.Control.Search({
+            layer: layer_Stunting2030_5,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'WADMKK'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"Stunting 2020": "real","Stunting 2030": "real","Kemiskinan 2020": "real","Kemiskinan 2030": "real","WADMKK": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Stunting2020 = document.createElement("div");
+            div_Stunting2020.id = "div_Stunting2020";
+            div_Stunting2020.className = "slider";
+            document.getElementById("menu").appendChild(div_Stunting2020);
+            var lab_Stunting2020 = document.createElement('div');
+            lab_Stunting2020.innerHTML  = 'Stunting 2020: <span id="val_Stunting2020"></span>';
+            lab_Stunting2020.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_Stunting2020);
+            var reset_Stunting2020 = document.createElement('div');
+            reset_Stunting2020.innerHTML = 'clear filter';
+            reset_Stunting2020.className = 'filterlabel';
+            lab_Stunting2020.className = 'filterlabel';
+            reset_Stunting2020.onclick = function() {
+                sel_Stunting2020.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_Stunting2020);
+            var sel_Stunting2020 = document.getElementById('div_Stunting2020');
+            noUiSlider.create(sel_Stunting2020, {
+                connect: true,
+                start: [0.048, 1.0],
+                range: {
+                min: 0.048,
+                max: 1.0
+                }
+            });
+            sel_Stunting2020.noUiSlider.on('update', function (values) {
+            val_Stunting2020 = document.getElementById('val_Stunting2020');
+            val_Stunting2020.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Stunting2030 = document.createElement("div");
+            div_Stunting2030.id = "div_Stunting2030";
+            div_Stunting2030.className = "slider";
+            document.getElementById("menu").appendChild(div_Stunting2030);
+            var lab_Stunting2030 = document.createElement('div');
+            lab_Stunting2030.innerHTML  = 'Stunting 2030: <span id="val_Stunting2030"></span>';
+            lab_Stunting2030.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_Stunting2030);
+            var reset_Stunting2030 = document.createElement('div');
+            reset_Stunting2030.innerHTML = 'clear filter';
+            reset_Stunting2030.className = 'filterlabel';
+            lab_Stunting2030.className = 'filterlabel';
+            reset_Stunting2030.onclick = function() {
+                sel_Stunting2030.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_Stunting2030);
+            var sel_Stunting2030 = document.getElementById('div_Stunting2030');
+            noUiSlider.create(sel_Stunting2030, {
+                connect: true,
+                start: [0.027, 1.0],
+                range: {
+                min: 0.027,
+                max: 1.0
+                }
+            });
+            sel_Stunting2030.noUiSlider.on('update', function (values) {
+            val_Stunting2030 = document.getElementById('val_Stunting2030');
+            val_Stunting2030.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Kemiskinan2020 = document.createElement("div");
+            div_Kemiskinan2020.id = "div_Kemiskinan2020";
+            div_Kemiskinan2020.className = "slider";
+            document.getElementById("menu").appendChild(div_Kemiskinan2020);
+            var lab_Kemiskinan2020 = document.createElement('div');
+            lab_Kemiskinan2020.innerHTML  = 'Kemiskinan 2020: <span id="val_Kemiskinan2020"></span>';
+            lab_Kemiskinan2020.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_Kemiskinan2020);
+            var reset_Kemiskinan2020 = document.createElement('div');
+            reset_Kemiskinan2020.innerHTML = 'clear filter';
+            reset_Kemiskinan2020.className = 'filterlabel';
+            lab_Kemiskinan2020.className = 'filterlabel';
+            reset_Kemiskinan2020.onclick = function() {
+                sel_Kemiskinan2020.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_Kemiskinan2020);
+            var sel_Kemiskinan2020 = document.getElementById('div_Kemiskinan2020');
+            noUiSlider.create(sel_Kemiskinan2020, {
+                connect: true,
+                start: [0.003, 1.0],
+                range: {
+                min: 0.003,
+                max: 1.0
+                }
+            });
+            sel_Kemiskinan2020.noUiSlider.on('update', function (values) {
+            val_Kemiskinan2020 = document.getElementById('val_Kemiskinan2020');
+            val_Kemiskinan2020.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Kemiskinan2030 = document.createElement("div");
+            div_Kemiskinan2030.id = "div_Kemiskinan2030";
+            div_Kemiskinan2030.className = "slider";
+            document.getElementById("menu").appendChild(div_Kemiskinan2030);
+            var lab_Kemiskinan2030 = document.createElement('div');
+            lab_Kemiskinan2030.innerHTML  = 'Kemiskinan 2030: <span id="val_Kemiskinan2030"></span>';
+            lab_Kemiskinan2030.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_Kemiskinan2030);
+            var reset_Kemiskinan2030 = document.createElement('div');
+            reset_Kemiskinan2030.innerHTML = 'clear filter';
+            reset_Kemiskinan2030.className = 'filterlabel';
+            lab_Kemiskinan2030.className = 'filterlabel';
+            reset_Kemiskinan2030.onclick = function() {
+                sel_Kemiskinan2030.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_Kemiskinan2030);
+            var sel_Kemiskinan2030 = document.getElementById('div_Kemiskinan2030');
+            noUiSlider.create(sel_Kemiskinan2030, {
+                connect: true,
+                start: [0.001, 1.0],
+                range: {
+                min: 0.001,
+                max: 1.0
+                }
+            });
+            sel_Kemiskinan2030.noUiSlider.on('update', function (values) {
+            val_Kemiskinan2030 = document.getElementById('val_Kemiskinan2030');
+            val_Kemiskinan2030.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_WADMKK = document.createElement('div');
+            div_WADMKK.id = "div_WADMKK";
+            div_WADMKK.className= "filterselect";
+            document.getElementById("menu").appendChild(div_WADMKK);
+            sel_WADMKK = document.createElement('select');
+            sel_WADMKK.multiple = true;
+            sel_WADMKK.size = 10;
+            sel_WADMKK.id = "sel_WADMKK";
+            var WADMKK_options_str = "<option value='' unselected></option>";
+            sel_WADMKK.onchange = function(){filterFunc()};
+            WADMKK_options_str  += '<option value="NULL">NULL</option>';
+            WADMKK_options_str  += '<option value="Aceh Barat">Aceh Barat</option>';
+            WADMKK_options_str  += '<option value="Aceh Barat Daya">Aceh Barat Daya</option>';
+            WADMKK_options_str  += '<option value="Aceh Besar">Aceh Besar</option>';
+            WADMKK_options_str  += '<option value="Aceh Jaya">Aceh Jaya</option>';
+            WADMKK_options_str  += '<option value="Aceh Selatan">Aceh Selatan</option>';
+            WADMKK_options_str  += '<option value="Aceh Singkil">Aceh Singkil</option>';
+            WADMKK_options_str  += '<option value="Aceh Tamiang">Aceh Tamiang</option>';
+            WADMKK_options_str  += '<option value="Aceh Tengah">Aceh Tengah</option>';
+            WADMKK_options_str  += '<option value="Aceh Tenggara">Aceh Tenggara</option>';
+            WADMKK_options_str  += '<option value="Aceh Timur">Aceh Timur</option>';
+            WADMKK_options_str  += '<option value="Aceh Utara">Aceh Utara</option>';
+            WADMKK_options_str  += '<option value="Adm. Kep. Seribu">Adm. Kep. Seribu</option>';
+            WADMKK_options_str  += '<option value="Agam">Agam</option>';
+            WADMKK_options_str  += '<option value="Alor">Alor</option>';
+            WADMKK_options_str  += '<option value="Asahan">Asahan</option>';
+            WADMKK_options_str  += '<option value="Asmat">Asmat</option>';
+            WADMKK_options_str  += '<option value="Badung">Badung</option>';
+            WADMKK_options_str  += '<option value="Balangan">Balangan</option>';
+            WADMKK_options_str  += '<option value="Bandung">Bandung</option>';
+            WADMKK_options_str  += '<option value="Bandung Barat">Bandung Barat</option>';
+            WADMKK_options_str  += '<option value="Banggai">Banggai</option>';
+            WADMKK_options_str  += '<option value="Banggai Kepulauan">Banggai Kepulauan</option>';
+            WADMKK_options_str  += '<option value="Banggai Laut">Banggai Laut</option>';
+            WADMKK_options_str  += '<option value="Bangka">Bangka</option>';
+            WADMKK_options_str  += '<option value="Bangka Barat">Bangka Barat</option>';
+            WADMKK_options_str  += '<option value="Bangka Selatan">Bangka Selatan</option>';
+            WADMKK_options_str  += '<option value="Bangka Tengah">Bangka Tengah</option>';
+            WADMKK_options_str  += '<option value="Bangkalan">Bangkalan</option>';
+            WADMKK_options_str  += '<option value="Bangli">Bangli</option>';
+            WADMKK_options_str  += '<option value="Banjar">Banjar</option>';
+            WADMKK_options_str  += '<option value="Banjarnegara">Banjarnegara</option>';
+            WADMKK_options_str  += '<option value="Bantaeng">Bantaeng</option>';
+            WADMKK_options_str  += '<option value="Bantul">Bantul</option>';
+            WADMKK_options_str  += '<option value="Banyuasin">Banyuasin</option>';
+            WADMKK_options_str  += '<option value="Banyumas">Banyumas</option>';
+            WADMKK_options_str  += '<option value="Banyuwangi">Banyuwangi</option>';
+            WADMKK_options_str  += '<option value="Barito Kuala">Barito Kuala</option>';
+            WADMKK_options_str  += '<option value="Barito Selatan">Barito Selatan</option>';
+            WADMKK_options_str  += '<option value="Barito Timur">Barito Timur</option>';
+            WADMKK_options_str  += '<option value="Barito Utara">Barito Utara</option>';
+            WADMKK_options_str  += '<option value="Barru">Barru</option>';
+            WADMKK_options_str  += '<option value="Batang">Batang</option>';
+            WADMKK_options_str  += '<option value="Batanghari">Batanghari</option>';
+            WADMKK_options_str  += '<option value="Batu Bara">Batu Bara</option>';
+            WADMKK_options_str  += '<option value="Bekasi">Bekasi</option>';
+            WADMKK_options_str  += '<option value="Belitung">Belitung</option>';
+            WADMKK_options_str  += '<option value="Belitung Timur">Belitung Timur</option>';
+            WADMKK_options_str  += '<option value="Belu">Belu</option>';
+            WADMKK_options_str  += '<option value="Bener Meriah">Bener Meriah</option>';
+            WADMKK_options_str  += '<option value="Bengkalis">Bengkalis</option>';
+            WADMKK_options_str  += '<option value="Bengkayang">Bengkayang</option>';
+            WADMKK_options_str  += '<option value="Bengkulu Selatan">Bengkulu Selatan</option>';
+            WADMKK_options_str  += '<option value="Bengkulu Tengah">Bengkulu Tengah</option>';
+            WADMKK_options_str  += '<option value="Bengkulu Utara">Bengkulu Utara</option>';
+            WADMKK_options_str  += '<option value="Berau">Berau</option>';
+            WADMKK_options_str  += '<option value="Biak Numfor">Biak Numfor</option>';
+            WADMKK_options_str  += '<option value="Bima">Bima</option>';
+            WADMKK_options_str  += '<option value="Bintan">Bintan</option>';
+            WADMKK_options_str  += '<option value="Bireuen">Bireuen</option>';
+            WADMKK_options_str  += '<option value="Blitar">Blitar</option>';
+            WADMKK_options_str  += '<option value="Blora">Blora</option>';
+            WADMKK_options_str  += '<option value="Boalemo">Boalemo</option>';
+            WADMKK_options_str  += '<option value="Bogor">Bogor</option>';
+            WADMKK_options_str  += '<option value="Bojonegoro">Bojonegoro</option>';
+            WADMKK_options_str  += '<option value="Bolaang Mongondow">Bolaang Mongondow</option>';
+            WADMKK_options_str  += '<option value="Bolaang Mongondow Selatan">Bolaang Mongondow Selatan</option>';
+            WADMKK_options_str  += '<option value="Bolaang Mongondow Timur">Bolaang Mongondow Timur</option>';
+            WADMKK_options_str  += '<option value="Bolaang Mongondow Utara">Bolaang Mongondow Utara</option>';
+            WADMKK_options_str  += '<option value="Bombana">Bombana</option>';
+            WADMKK_options_str  += '<option value="Bondowoso">Bondowoso</option>';
+            WADMKK_options_str  += '<option value="Bone">Bone</option>';
+            WADMKK_options_str  += '<option value="Bone Bolango">Bone Bolango</option>';
+            WADMKK_options_str  += '<option value="Boven Digoel">Boven Digoel</option>';
+            WADMKK_options_str  += '<option value="Boyolali">Boyolali</option>';
+            WADMKK_options_str  += '<option value="Brebes">Brebes</option>';
+            WADMKK_options_str  += '<option value="Buleleng">Buleleng</option>';
+            WADMKK_options_str  += '<option value="Bulukumba">Bulukumba</option>';
+            WADMKK_options_str  += '<option value="Bulungan">Bulungan</option>';
+            WADMKK_options_str  += '<option value="Bungo">Bungo</option>';
+            WADMKK_options_str  += '<option value="Buol">Buol</option>';
+            WADMKK_options_str  += '<option value="Buru">Buru</option>';
+            WADMKK_options_str  += '<option value="Buru Selatan">Buru Selatan</option>';
+            WADMKK_options_str  += '<option value="Buton">Buton</option>';
+            WADMKK_options_str  += '<option value="Buton Selatan">Buton Selatan</option>';
+            WADMKK_options_str  += '<option value="Buton Tengah">Buton Tengah</option>';
+            WADMKK_options_str  += '<option value="Buton Utara">Buton Utara</option>';
+            WADMKK_options_str  += '<option value="Ciamis">Ciamis</option>';
+            WADMKK_options_str  += '<option value="Cianjur">Cianjur</option>';
+            WADMKK_options_str  += '<option value="Cilacap">Cilacap</option>';
+            WADMKK_options_str  += '<option value="Cirebon">Cirebon</option>';
+            WADMKK_options_str  += '<option value="Dairi">Dairi</option>';
+            WADMKK_options_str  += '<option value="Deiyai">Deiyai</option>';
+            WADMKK_options_str  += '<option value="Deli Serdang">Deli Serdang</option>';
+            WADMKK_options_str  += '<option value="Demak">Demak</option>';
+            WADMKK_options_str  += '<option value="Dharmasraya">Dharmasraya</option>';
+            WADMKK_options_str  += '<option value="Dogiyai">Dogiyai</option>';
+            WADMKK_options_str  += '<option value="Dompu">Dompu</option>';
+            WADMKK_options_str  += '<option value="Donggala">Donggala</option>';
+            WADMKK_options_str  += '<option value="Empat Lawang">Empat Lawang</option>';
+            WADMKK_options_str  += '<option value="Ende">Ende</option>';
+            WADMKK_options_str  += '<option value="Enrekang">Enrekang</option>';
+            WADMKK_options_str  += '<option value="Fak Fak">Fak Fak</option>';
+            WADMKK_options_str  += '<option value="Flores Timur">Flores Timur</option>';
+            WADMKK_options_str  += '<option value="Garut">Garut</option>';
+            WADMKK_options_str  += '<option value="Gayo Lues">Gayo Lues</option>';
+            WADMKK_options_str  += '<option value="Gianyar">Gianyar</option>';
+            WADMKK_options_str  += '<option value="Gorontalo">Gorontalo</option>';
+            WADMKK_options_str  += '<option value="Gorontalo Utara">Gorontalo Utara</option>';
+            WADMKK_options_str  += '<option value="Gowa">Gowa</option>';
+            WADMKK_options_str  += '<option value="Gresik">Gresik</option>';
+            WADMKK_options_str  += '<option value="Grobogan">Grobogan</option>';
+            WADMKK_options_str  += '<option value="Gunung Mas">Gunung Mas</option>';
+            WADMKK_options_str  += '<option value="Gunungkidul">Gunungkidul</option>';
+            WADMKK_options_str  += '<option value="Halmahera Barat">Halmahera Barat</option>';
+            WADMKK_options_str  += '<option value="Halmahera Selatan">Halmahera Selatan</option>';
+            WADMKK_options_str  += '<option value="Halmahera Tengah">Halmahera Tengah</option>';
+            WADMKK_options_str  += '<option value="Halmahera Timur">Halmahera Timur</option>';
+            WADMKK_options_str  += '<option value="Halmahera Utara">Halmahera Utara</option>';
+            WADMKK_options_str  += '<option value="Hulu Sungai Selatan">Hulu Sungai Selatan</option>';
+            WADMKK_options_str  += '<option value="Hulu Sungai Tengah">Hulu Sungai Tengah</option>';
+            WADMKK_options_str  += '<option value="Hulu Sungai Utara">Hulu Sungai Utara</option>';
+            WADMKK_options_str  += '<option value="Humbang Hasundutan">Humbang Hasundutan</option>';
+            WADMKK_options_str  += '<option value="Indragiri Hilir">Indragiri Hilir</option>';
+            WADMKK_options_str  += '<option value="Indragiri Hulu">Indragiri Hulu</option>';
+            WADMKK_options_str  += '<option value="Indramayu">Indramayu</option>';
+            WADMKK_options_str  += '<option value="Intan Jaya">Intan Jaya</option>';
+            WADMKK_options_str  += '<option value="Jayapura">Jayapura</option>';
+            WADMKK_options_str  += '<option value="Jayawijaya">Jayawijaya</option>';
+            WADMKK_options_str  += '<option value="Jember">Jember</option>';
+            WADMKK_options_str  += '<option value="Jembrana">Jembrana</option>';
+            WADMKK_options_str  += '<option value="Jeneponto">Jeneponto</option>';
+            WADMKK_options_str  += '<option value="Jepara">Jepara</option>';
+            WADMKK_options_str  += '<option value="Jombang">Jombang</option>';
+            WADMKK_options_str  += '<option value="Kaimana">Kaimana</option>';
+            WADMKK_options_str  += '<option value="Kampar">Kampar</option>';
+            WADMKK_options_str  += '<option value="Kapuas">Kapuas</option>';
+            WADMKK_options_str  += '<option value="Kapuas Hulu">Kapuas Hulu</option>';
+            WADMKK_options_str  += '<option value="Karanganyar">Karanganyar</option>';
+            WADMKK_options_str  += '<option value="Karangasem">Karangasem</option>';
+            WADMKK_options_str  += '<option value="Karawang">Karawang</option>';
+            WADMKK_options_str  += '<option value="Karimun">Karimun</option>';
+            WADMKK_options_str  += '<option value="Karo">Karo</option>';
+            WADMKK_options_str  += '<option value="Katingan">Katingan</option>';
+            WADMKK_options_str  += '<option value="Kaur">Kaur</option>';
+            WADMKK_options_str  += '<option value="Kayong Utara">Kayong Utara</option>';
+            WADMKK_options_str  += '<option value="Kebumen">Kebumen</option>';
+            WADMKK_options_str  += '<option value="Kediri">Kediri</option>';
+            WADMKK_options_str  += '<option value="Keerom">Keerom</option>';
+            WADMKK_options_str  += '<option value="Kendal">Kendal</option>';
+            WADMKK_options_str  += '<option value="Kep. Siau Tagulandang Biaro">Kep. Siau Tagulandang Biaro</option>';
+            WADMKK_options_str  += '<option value="Kepahiang">Kepahiang</option>';
+            WADMKK_options_str  += '<option value="Kepulauan Anambas">Kepulauan Anambas</option>';
+            WADMKK_options_str  += '<option value="Kepulauan Aru">Kepulauan Aru</option>';
+            WADMKK_options_str  += '<option value="Kepulauan Mentawai">Kepulauan Mentawai</option>';
+            WADMKK_options_str  += '<option value="Kepulauan Meranti">Kepulauan Meranti</option>';
+            WADMKK_options_str  += '<option value="Kepulauan Sangihe">Kepulauan Sangihe</option>';
+            WADMKK_options_str  += '<option value="Kepulauan Selayar">Kepulauan Selayar</option>';
+            WADMKK_options_str  += '<option value="Kepulauan Sula">Kepulauan Sula</option>';
+            WADMKK_options_str  += '<option value="Kepulauan Talaud">Kepulauan Talaud</option>';
+            WADMKK_options_str  += '<option value="Kepulauan Tanimbar">Kepulauan Tanimbar</option>';
+            WADMKK_options_str  += '<option value="Kepulauan Yapen">Kepulauan Yapen</option>';
+            WADMKK_options_str  += '<option value="Kerinci">Kerinci</option>';
+            WADMKK_options_str  += '<option value="Ketapang">Ketapang</option>';
+            WADMKK_options_str  += '<option value="Klaten">Klaten</option>';
+            WADMKK_options_str  += '<option value="Klungkung">Klungkung</option>';
+            WADMKK_options_str  += '<option value="Kolaka">Kolaka</option>';
+            WADMKK_options_str  += '<option value="Kolaka Timur">Kolaka Timur</option>';
+            WADMKK_options_str  += '<option value="Kolaka Utara">Kolaka Utara</option>';
+            WADMKK_options_str  += '<option value="Konawe">Konawe</option>';
+            WADMKK_options_str  += '<option value="Konawe Kepulauan">Konawe Kepulauan</option>';
+            WADMKK_options_str  += '<option value="Konawe Selatan">Konawe Selatan</option>';
+            WADMKK_options_str  += '<option value="Konawe Utara">Konawe Utara</option>';
+            WADMKK_options_str  += '<option value="Kota Adm. Jakarta Barat">Kota Adm. Jakarta Barat</option>';
+            WADMKK_options_str  += '<option value="Kota Adm. Jakarta Pusat">Kota Adm. Jakarta Pusat</option>';
+            WADMKK_options_str  += '<option value="Kota Adm. Jakarta Selatan">Kota Adm. Jakarta Selatan</option>';
+            WADMKK_options_str  += '<option value="Kota Adm. Jakarta Timur">Kota Adm. Jakarta Timur</option>';
+            WADMKK_options_str  += '<option value="Kota Adm. Jakarta Utara">Kota Adm. Jakarta Utara</option>';
+            WADMKK_options_str  += '<option value="Kota Ambon">Kota Ambon</option>';
+            WADMKK_options_str  += '<option value="Kota Balikpapan">Kota Balikpapan</option>';
+            WADMKK_options_str  += '<option value="Kota Banda Aceh">Kota Banda Aceh</option>';
+            WADMKK_options_str  += '<option value="Kota Bandar Lampung">Kota Bandar Lampung</option>';
+            WADMKK_options_str  += '<option value="Kota Bandung">Kota Bandung</option>';
+            WADMKK_options_str  += '<option value="Kota Banjar">Kota Banjar</option>';
+            WADMKK_options_str  += '<option value="Kota Banjarbaru">Kota Banjarbaru</option>';
+            WADMKK_options_str  += '<option value="Kota Banjarmasin">Kota Banjarmasin</option>';
+            WADMKK_options_str  += '<option value="Kota Batam">Kota Batam</option>';
+            WADMKK_options_str  += '<option value="Kota Batu">Kota Batu</option>';
+            WADMKK_options_str  += '<option value="Kota Bau Bau">Kota Bau Bau</option>';
+            WADMKK_options_str  += '<option value="Kota Bekasi">Kota Bekasi</option>';
+            WADMKK_options_str  += '<option value="Kota Bengkulu">Kota Bengkulu</option>';
+            WADMKK_options_str  += '<option value="Kota Bima">Kota Bima</option>';
+            WADMKK_options_str  += '<option value="Kota Binjai">Kota Binjai</option>';
+            WADMKK_options_str  += '<option value="Kota Bitung">Kota Bitung</option>';
+            WADMKK_options_str  += '<option value="Kota Blitar">Kota Blitar</option>';
+            WADMKK_options_str  += '<option value="Kota Bogor">Kota Bogor</option>';
+            WADMKK_options_str  += '<option value="Kota Bontang">Kota Bontang</option>';
+            WADMKK_options_str  += '<option value="Kota Bukittinggi">Kota Bukittinggi</option>';
+            WADMKK_options_str  += '<option value="Kota Cilegon">Kota Cilegon</option>';
+            WADMKK_options_str  += '<option value="Kota Cimahi">Kota Cimahi</option>';
+            WADMKK_options_str  += '<option value="Kota Cirebon">Kota Cirebon</option>';
+            WADMKK_options_str  += '<option value="Kota Denpasar">Kota Denpasar</option>';
+            WADMKK_options_str  += '<option value="Kota Depok">Kota Depok</option>';
+            WADMKK_options_str  += '<option value="Kota Dumai">Kota Dumai</option>';
+            WADMKK_options_str  += '<option value="Kota Gorontalo">Kota Gorontalo</option>';
+            WADMKK_options_str  += '<option value="Kota Gunungsitoli">Kota Gunungsitoli</option>';
+            WADMKK_options_str  += '<option value="Kota Jambi">Kota Jambi</option>';
+            WADMKK_options_str  += '<option value="Kota Jayapura">Kota Jayapura</option>';
+            WADMKK_options_str  += '<option value="Kota Kediri">Kota Kediri</option>';
+            WADMKK_options_str  += '<option value="Kota Kendari">Kota Kendari</option>';
+            WADMKK_options_str  += '<option value="Kota Kotamobagu">Kota Kotamobagu</option>';
+            WADMKK_options_str  += '<option value="Kota Kupang">Kota Kupang</option>';
+            WADMKK_options_str  += '<option value="Kota Langsa">Kota Langsa</option>';
+            WADMKK_options_str  += '<option value="Kota Lhokseumawe">Kota Lhokseumawe</option>';
+            WADMKK_options_str  += '<option value="Kota Lubuk Linggau">Kota Lubuk Linggau</option>';
+            WADMKK_options_str  += '<option value="Kota Madiun">Kota Madiun</option>';
+            WADMKK_options_str  += '<option value="Kota Magelang">Kota Magelang</option>';
+            WADMKK_options_str  += '<option value="Kota Makassar">Kota Makassar</option>';
+            WADMKK_options_str  += '<option value="Kota Malang">Kota Malang</option>';
+            WADMKK_options_str  += '<option value="Kota Manado">Kota Manado</option>';
+            WADMKK_options_str  += '<option value="Kota Mataram">Kota Mataram</option>';
+            WADMKK_options_str  += '<option value="Kota Medan">Kota Medan</option>';
+            WADMKK_options_str  += '<option value="Kota Metro">Kota Metro</option>';
+            WADMKK_options_str  += '<option value="Kota Mojokerto">Kota Mojokerto</option>';
+            WADMKK_options_str  += '<option value="Kota Padang">Kota Padang</option>';
+            WADMKK_options_str  += '<option value="Kota Padang Panjang">Kota Padang Panjang</option>';
+            WADMKK_options_str  += '<option value="Kota Padang Sidempuan">Kota Padang Sidempuan</option>';
+            WADMKK_options_str  += '<option value="Kota Pagar Alam">Kota Pagar Alam</option>';
+            WADMKK_options_str  += '<option value="Kota Palangkaraya">Kota Palangkaraya</option>';
+            WADMKK_options_str  += '<option value="Kota Palembang">Kota Palembang</option>';
+            WADMKK_options_str  += '<option value="Kota Palopo">Kota Palopo</option>';
+            WADMKK_options_str  += '<option value="Kota Palu">Kota Palu</option>';
+            WADMKK_options_str  += '<option value="Kota Pangkal Pinang">Kota Pangkal Pinang</option>';
+            WADMKK_options_str  += '<option value="Kota Parepare">Kota Parepare</option>';
+            WADMKK_options_str  += '<option value="Kota Pariaman">Kota Pariaman</option>';
+            WADMKK_options_str  += '<option value="Kota Pasuruan">Kota Pasuruan</option>';
+            WADMKK_options_str  += '<option value="Kota Payakumbuh">Kota Payakumbuh</option>';
+            WADMKK_options_str  += '<option value="Kota Pekalongan">Kota Pekalongan</option>';
+            WADMKK_options_str  += '<option value="Kota Pekanbaru">Kota Pekanbaru</option>';
+            WADMKK_options_str  += '<option value="Kota Pematangsiantar">Kota Pematangsiantar</option>';
+            WADMKK_options_str  += '<option value="Kota Pontianak">Kota Pontianak</option>';
+            WADMKK_options_str  += '<option value="Kota Prabumulih">Kota Prabumulih</option>';
+            WADMKK_options_str  += '<option value="Kota Probolinggo">Kota Probolinggo</option>';
+            WADMKK_options_str  += '<option value="Kota Sabang">Kota Sabang</option>';
+            WADMKK_options_str  += '<option value="Kota Salatiga">Kota Salatiga</option>';
+            WADMKK_options_str  += '<option value="Kota Samarinda">Kota Samarinda</option>';
+            WADMKK_options_str  += '<option value="Kota Sawahlunto">Kota Sawahlunto</option>';
+            WADMKK_options_str  += '<option value="Kota Semarang">Kota Semarang</option>';
+            WADMKK_options_str  += '<option value="Kota Serang">Kota Serang</option>';
+            WADMKK_options_str  += '<option value="Kota Sibolga">Kota Sibolga</option>';
+            WADMKK_options_str  += '<option value="Kota Singkawang">Kota Singkawang</option>';
+            WADMKK_options_str  += '<option value="Kota Solok">Kota Solok</option>';
+            WADMKK_options_str  += '<option value="Kota Sorong">Kota Sorong</option>';
+            WADMKK_options_str  += '<option value="Kota Subulussalam">Kota Subulussalam</option>';
+            WADMKK_options_str  += '<option value="Kota Sukabumi">Kota Sukabumi</option>';
+            WADMKK_options_str  += '<option value="Kota Sungai Penuh">Kota Sungai Penuh</option>';
+            WADMKK_options_str  += '<option value="Kota Surabaya">Kota Surabaya</option>';
+            WADMKK_options_str  += '<option value="Kota Surakarta">Kota Surakarta</option>';
+            WADMKK_options_str  += '<option value="Kota Tangerang">Kota Tangerang</option>';
+            WADMKK_options_str  += '<option value="Kota Tangerang Selatan">Kota Tangerang Selatan</option>';
+            WADMKK_options_str  += '<option value="Kota Tanjung Balai">Kota Tanjung Balai</option>';
+            WADMKK_options_str  += '<option value="Kota Tanjung Pinang">Kota Tanjung Pinang</option>';
+            WADMKK_options_str  += '<option value="Kota Tarakan">Kota Tarakan</option>';
+            WADMKK_options_str  += '<option value="Kota Tasikmalaya">Kota Tasikmalaya</option>';
+            WADMKK_options_str  += '<option value="Kota Tebing Tinggi">Kota Tebing Tinggi</option>';
+            WADMKK_options_str  += '<option value="Kota Tegal">Kota Tegal</option>';
+            WADMKK_options_str  += '<option value="Kota Ternate">Kota Ternate</option>';
+            WADMKK_options_str  += '<option value="Kota Tidore Kepulauan">Kota Tidore Kepulauan</option>';
+            WADMKK_options_str  += '<option value="Kota Tomohon">Kota Tomohon</option>';
+            WADMKK_options_str  += '<option value="Kota Tual">Kota Tual</option>';
+            WADMKK_options_str  += '<option value="Kota Yogyakarta">Kota Yogyakarta</option>';
+            WADMKK_options_str  += '<option value="Kotabaru">Kotabaru</option>';
+            WADMKK_options_str  += '<option value="Kotawaringin Barat">Kotawaringin Barat</option>';
+            WADMKK_options_str  += '<option value="Kotawaringin Timur">Kotawaringin Timur</option>';
+            WADMKK_options_str  += '<option value="Kuantan Singingi">Kuantan Singingi</option>';
+            WADMKK_options_str  += '<option value="Kubu Raya">Kubu Raya</option>';
+            WADMKK_options_str  += '<option value="Kudus">Kudus</option>';
+            WADMKK_options_str  += '<option value="Kulon Progo">Kulon Progo</option>';
+            WADMKK_options_str  += '<option value="Kuningan">Kuningan</option>';
+            WADMKK_options_str  += '<option value="Kupang">Kupang</option>';
+            WADMKK_options_str  += '<option value="Kutai Barat">Kutai Barat</option>';
+            WADMKK_options_str  += '<option value="Kutai Kartanegara">Kutai Kartanegara</option>';
+            WADMKK_options_str  += '<option value="Kutai Timur">Kutai Timur</option>';
+            WADMKK_options_str  += '<option value="Labuhanbatu">Labuhanbatu</option>';
+            WADMKK_options_str  += '<option value="Labuhanbatu Selatan">Labuhanbatu Selatan</option>';
+            WADMKK_options_str  += '<option value="Labuhanbatu Utara">Labuhanbatu Utara</option>';
+            WADMKK_options_str  += '<option value="Lahat">Lahat</option>';
+            WADMKK_options_str  += '<option value="Lamandau">Lamandau</option>';
+            WADMKK_options_str  += '<option value="Lamongan">Lamongan</option>';
+            WADMKK_options_str  += '<option value="Lampung Barat">Lampung Barat</option>';
+            WADMKK_options_str  += '<option value="Lampung Selatan">Lampung Selatan</option>';
+            WADMKK_options_str  += '<option value="Lampung Tengah">Lampung Tengah</option>';
+            WADMKK_options_str  += '<option value="Lampung Timur">Lampung Timur</option>';
+            WADMKK_options_str  += '<option value="Lampung Utara">Lampung Utara</option>';
+            WADMKK_options_str  += '<option value="Landak">Landak</option>';
+            WADMKK_options_str  += '<option value="Langkat">Langkat</option>';
+            WADMKK_options_str  += '<option value="Lanny Jaya">Lanny Jaya</option>';
+            WADMKK_options_str  += '<option value="Lebak">Lebak</option>';
+            WADMKK_options_str  += '<option value="Lebong">Lebong</option>';
+            WADMKK_options_str  += '<option value="Lembata">Lembata</option>';
+            WADMKK_options_str  += '<option value="Lima Puluh Kota">Lima Puluh Kota</option>';
+            WADMKK_options_str  += '<option value="Lingga">Lingga</option>';
+            WADMKK_options_str  += '<option value="Lombok Barat">Lombok Barat</option>';
+            WADMKK_options_str  += '<option value="Lombok Tengah">Lombok Tengah</option>';
+            WADMKK_options_str  += '<option value="Lombok Timur">Lombok Timur</option>';
+            WADMKK_options_str  += '<option value="Lombok Utara">Lombok Utara</option>';
+            WADMKK_options_str  += '<option value="Lumajang">Lumajang</option>';
+            WADMKK_options_str  += '<option value="Luwu">Luwu</option>';
+            WADMKK_options_str  += '<option value="Luwu Timur">Luwu Timur</option>';
+            WADMKK_options_str  += '<option value="Luwu Utara">Luwu Utara</option>';
+            WADMKK_options_str  += '<option value="Madiun">Madiun</option>';
+            WADMKK_options_str  += '<option value="Magelang">Magelang</option>';
+            WADMKK_options_str  += '<option value="Magetan">Magetan</option>';
+            WADMKK_options_str  += '<option value="Mahakam Ulu">Mahakam Ulu</option>';
+            WADMKK_options_str  += '<option value="Majalengka">Majalengka</option>';
+            WADMKK_options_str  += '<option value="Majene">Majene</option>';
+            WADMKK_options_str  += '<option value="Malaka">Malaka</option>';
+            WADMKK_options_str  += '<option value="Malang">Malang</option>';
+            WADMKK_options_str  += '<option value="Malinau">Malinau</option>';
+            WADMKK_options_str  += '<option value="Maluku Barat Daya">Maluku Barat Daya</option>';
+            WADMKK_options_str  += '<option value="Maluku Tengah">Maluku Tengah</option>';
+            WADMKK_options_str  += '<option value="Maluku Tenggara">Maluku Tenggara</option>';
+            WADMKK_options_str  += '<option value="Mamasa">Mamasa</option>';
+            WADMKK_options_str  += '<option value="Mamberamo Raya">Mamberamo Raya</option>';
+            WADMKK_options_str  += '<option value="Mamberamo Tengah">Mamberamo Tengah</option>';
+            WADMKK_options_str  += '<option value="Mamuju">Mamuju</option>';
+            WADMKK_options_str  += '<option value="Mamuju Tengah">Mamuju Tengah</option>';
+            WADMKK_options_str  += '<option value="Mandailing Natal">Mandailing Natal</option>';
+            WADMKK_options_str  += '<option value="Manggarai">Manggarai</option>';
+            WADMKK_options_str  += '<option value="Manggarai Barat">Manggarai Barat</option>';
+            WADMKK_options_str  += '<option value="Manggarai Timur">Manggarai Timur</option>';
+            WADMKK_options_str  += '<option value="Manokwari">Manokwari</option>';
+            WADMKK_options_str  += '<option value="Manokwari Selatan">Manokwari Selatan</option>';
+            WADMKK_options_str  += '<option value="Mappi">Mappi</option>';
+            WADMKK_options_str  += '<option value="Maros">Maros</option>';
+            WADMKK_options_str  += '<option value="Maybrat">Maybrat</option>';
+            WADMKK_options_str  += '<option value="Melawi">Melawi</option>';
+            WADMKK_options_str  += '<option value="Mempawah">Mempawah</option>';
+            WADMKK_options_str  += '<option value="Merangin">Merangin</option>';
+            WADMKK_options_str  += '<option value="Merauke">Merauke</option>';
+            WADMKK_options_str  += '<option value="Mesuji">Mesuji</option>';
+            WADMKK_options_str  += '<option value="Mimika">Mimika</option>';
+            WADMKK_options_str  += '<option value="Minahasa">Minahasa</option>';
+            WADMKK_options_str  += '<option value="Minahasa Selatan">Minahasa Selatan</option>';
+            WADMKK_options_str  += '<option value="Minahasa Selatan/Bolaang Mongondwo Timur">Minahasa Selatan/Bolaang Mongondwo Timur</option>';
+            WADMKK_options_str  += '<option value="Minahasa Tenggara">Minahasa Tenggara</option>';
+            WADMKK_options_str  += '<option value="Minahasa Utara">Minahasa Utara</option>';
+            WADMKK_options_str  += '<option value="Mojokerto">Mojokerto</option>';
+            WADMKK_options_str  += '<option value="Morowali">Morowali</option>';
+            WADMKK_options_str  += '<option value="Morowali Utara">Morowali Utara</option>';
+            WADMKK_options_str  += '<option value="Muara Enim">Muara Enim</option>';
+            WADMKK_options_str  += '<option value="Muaro Jambi">Muaro Jambi</option>';
+            WADMKK_options_str  += '<option value="Muko Muko">Muko Muko</option>';
+            WADMKK_options_str  += '<option value="Muna">Muna</option>';
+            WADMKK_options_str  += '<option value="Muna Barat">Muna Barat</option>';
+            WADMKK_options_str  += '<option value="Murung Raya">Murung Raya</option>';
+            WADMKK_options_str  += '<option value="Musi Banyuasin">Musi Banyuasin</option>';
+            WADMKK_options_str  += '<option value="Musi Rawas">Musi Rawas</option>';
+            WADMKK_options_str  += '<option value="Musi Rawas Utara">Musi Rawas Utara</option>';
+            WADMKK_options_str  += '<option value="Nabire">Nabire</option>';
+            WADMKK_options_str  += '<option value="Nagan Raya">Nagan Raya</option>';
+            WADMKK_options_str  += '<option value="Nagekeo">Nagekeo</option>';
+            WADMKK_options_str  += '<option value="Natuna">Natuna</option>';
+            WADMKK_options_str  += '<option value="Nduga">Nduga</option>';
+            WADMKK_options_str  += '<option value="Ngada">Ngada</option>';
+            WADMKK_options_str  += '<option value="Nganjuk">Nganjuk</option>';
+            WADMKK_options_str  += '<option value="Ngawi">Ngawi</option>';
+            WADMKK_options_str  += '<option value="Nias">Nias</option>';
+            WADMKK_options_str  += '<option value="Nias Barat">Nias Barat</option>';
+            WADMKK_options_str  += '<option value="Nias Selatan">Nias Selatan</option>';
+            WADMKK_options_str  += '<option value="Nias Utara">Nias Utara</option>';
+            WADMKK_options_str  += '<option value="Nunukan">Nunukan</option>';
+            WADMKK_options_str  += '<option value="Ogan Ilir">Ogan Ilir</option>';
+            WADMKK_options_str  += '<option value="Ogan Komering Ilir">Ogan Komering Ilir</option>';
+            WADMKK_options_str  += '<option value="Ogan Komering Ulu">Ogan Komering Ulu</option>';
+            WADMKK_options_str  += '<option value="Ogan Komering Ulu Selatan">Ogan Komering Ulu Selatan</option>';
+            WADMKK_options_str  += '<option value="Ogan Komering Ulu Timur">Ogan Komering Ulu Timur</option>';
+            WADMKK_options_str  += '<option value="Pacitan">Pacitan</option>';
+            WADMKK_options_str  += '<option value="Padang Lawas">Padang Lawas</option>';
+            WADMKK_options_str  += '<option value="Padang Lawas Utara">Padang Lawas Utara</option>';
+            WADMKK_options_str  += '<option value="Padang Pariaman">Padang Pariaman</option>';
+            WADMKK_options_str  += '<option value="Pakpak Bharat">Pakpak Bharat</option>';
+            WADMKK_options_str  += '<option value="Pamekasan">Pamekasan</option>';
+            WADMKK_options_str  += '<option value="Pandeglang">Pandeglang</option>';
+            WADMKK_options_str  += '<option value="Pangandaran">Pangandaran</option>';
+            WADMKK_options_str  += '<option value="Pangkajene Dan Kepulauan">Pangkajene Dan Kepulauan</option>';
+            WADMKK_options_str  += '<option value="Paniai">Paniai</option>';
+            WADMKK_options_str  += '<option value="Parigi Moutong">Parigi Moutong</option>';
+            WADMKK_options_str  += '<option value="Pasaman">Pasaman</option>';
+            WADMKK_options_str  += '<option value="Pasaman Barat">Pasaman Barat</option>';
+            WADMKK_options_str  += '<option value="Pasangkayu">Pasangkayu</option>';
+            WADMKK_options_str  += '<option value="Paser">Paser</option>';
+            WADMKK_options_str  += '<option value="Pasuruan">Pasuruan</option>';
+            WADMKK_options_str  += '<option value="Pati">Pati</option>';
+            WADMKK_options_str  += '<option value="Pegunungan Arfak">Pegunungan Arfak</option>';
+            WADMKK_options_str  += '<option value="Pegunungan Bintang">Pegunungan Bintang</option>';
+            WADMKK_options_str  += '<option value="Pekalongan">Pekalongan</option>';
+            WADMKK_options_str  += '<option value="Pelalawan">Pelalawan</option>';
+            WADMKK_options_str  += '<option value="Pemalang">Pemalang</option>';
+            WADMKK_options_str  += '<option value="Penajam Paser Utara">Penajam Paser Utara</option>';
+            WADMKK_options_str  += '<option value="Penukal Abab Lematang Ilir">Penukal Abab Lematang Ilir</option>';
+            WADMKK_options_str  += '<option value="Pesawaran">Pesawaran</option>';
+            WADMKK_options_str  += '<option value="Pesisir Barat">Pesisir Barat</option>';
+            WADMKK_options_str  += '<option value="Pesisir Selatan">Pesisir Selatan</option>';
+            WADMKK_options_str  += '<option value="Pidie">Pidie</option>';
+            WADMKK_options_str  += '<option value="Pidie Jaya">Pidie Jaya</option>';
+            WADMKK_options_str  += '<option value="Pinrang">Pinrang</option>';
+            WADMKK_options_str  += '<option value="Pohuwato">Pohuwato</option>';
+            WADMKK_options_str  += '<option value="Polewali Mandar">Polewali Mandar</option>';
+            WADMKK_options_str  += '<option value="Ponorogo">Ponorogo</option>';
+            WADMKK_options_str  += '<option value="Poso">Poso</option>';
+            WADMKK_options_str  += '<option value="Pringsewu">Pringsewu</option>';
+            WADMKK_options_str  += '<option value="Probolinggo">Probolinggo</option>';
+            WADMKK_options_str  += '<option value="Pulang Pisau">Pulang Pisau</option>';
+            WADMKK_options_str  += '<option value="Pulau Morotai">Pulau Morotai</option>';
+            WADMKK_options_str  += '<option value="Pulau Taliabu">Pulau Taliabu</option>';
+            WADMKK_options_str  += '<option value="Puncak">Puncak</option>';
+            WADMKK_options_str  += '<option value="Puncak Jaya">Puncak Jaya</option>';
+            WADMKK_options_str  += '<option value="Purbalingga">Purbalingga</option>';
+            WADMKK_options_str  += '<option value="Purwakarta">Purwakarta</option>';
+            WADMKK_options_str  += '<option value="Purworejo">Purworejo</option>';
+            WADMKK_options_str  += '<option value="Raja Ampat">Raja Ampat</option>';
+            WADMKK_options_str  += '<option value="Rejang Lebong">Rejang Lebong</option>';
+            WADMKK_options_str  += '<option value="Rembang">Rembang</option>';
+            WADMKK_options_str  += '<option value="Rokan Hilir">Rokan Hilir</option>';
+            WADMKK_options_str  += '<option value="Rokan Hulu">Rokan Hulu</option>';
+            WADMKK_options_str  += '<option value="Rote Ndao">Rote Ndao</option>';
+            WADMKK_options_str  += '<option value="Sabu Raijua">Sabu Raijua</option>';
+            WADMKK_options_str  += '<option value="Sambas">Sambas</option>';
+            WADMKK_options_str  += '<option value="Samosir">Samosir</option>';
+            WADMKK_options_str  += '<option value="Sampang">Sampang</option>';
+            WADMKK_options_str  += '<option value="Sanggau">Sanggau</option>';
+            WADMKK_options_str  += '<option value="Sarmi">Sarmi</option>';
+            WADMKK_options_str  += '<option value="Sarolangun">Sarolangun</option>';
+            WADMKK_options_str  += '<option value="Sekadau">Sekadau</option>';
+            WADMKK_options_str  += '<option value="Seluma">Seluma</option>';
+            WADMKK_options_str  += '<option value="Semarang">Semarang</option>';
+            WADMKK_options_str  += '<option value="Seram Bagian Barat">Seram Bagian Barat</option>';
+            WADMKK_options_str  += '<option value="Seram Bagian Timur">Seram Bagian Timur</option>';
+            WADMKK_options_str  += '<option value="Serang">Serang</option>';
+            WADMKK_options_str  += '<option value="Serdang Bedagai">Serdang Bedagai</option>';
+            WADMKK_options_str  += '<option value="Seruyan">Seruyan</option>';
+            WADMKK_options_str  += '<option value="Siak">Siak</option>';
+            WADMKK_options_str  += '<option value="Sidenreng Rappang">Sidenreng Rappang</option>';
+            WADMKK_options_str  += '<option value="Sidoarjo">Sidoarjo</option>';
+            WADMKK_options_str  += '<option value="Sigi">Sigi</option>';
+            WADMKK_options_str  += '<option value="Sijunjung">Sijunjung</option>';
+            WADMKK_options_str  += '<option value="Sikka">Sikka</option>';
+            WADMKK_options_str  += '<option value="Simalungun">Simalungun</option>';
+            WADMKK_options_str  += '<option value="Simeulue">Simeulue</option>';
+            WADMKK_options_str  += '<option value="Sinjai">Sinjai</option>';
+            WADMKK_options_str  += '<option value="Sintang">Sintang</option>';
+            WADMKK_options_str  += '<option value="Situbondo">Situbondo</option>';
+            WADMKK_options_str  += '<option value="Sleman">Sleman</option>';
+            WADMKK_options_str  += '<option value="Solok">Solok</option>';
+            WADMKK_options_str  += '<option value="Solok Selatan">Solok Selatan</option>';
+            WADMKK_options_str  += '<option value="Soppeng">Soppeng</option>';
+            WADMKK_options_str  += '<option value="Sorong">Sorong</option>';
+            WADMKK_options_str  += '<option value="Sorong Selatan">Sorong Selatan</option>';
+            WADMKK_options_str  += '<option value="Sragen">Sragen</option>';
+            WADMKK_options_str  += '<option value="Subang">Subang</option>';
+            WADMKK_options_str  += '<option value="Sukabumi">Sukabumi</option>';
+            WADMKK_options_str  += '<option value="Sukamara">Sukamara</option>';
+            WADMKK_options_str  += '<option value="Sukoharjo">Sukoharjo</option>';
+            WADMKK_options_str  += '<option value="Sumba Barat">Sumba Barat</option>';
+            WADMKK_options_str  += '<option value="Sumba Barat Daya">Sumba Barat Daya</option>';
+            WADMKK_options_str  += '<option value="Sumba Tengah">Sumba Tengah</option>';
+            WADMKK_options_str  += '<option value="Sumba Timur">Sumba Timur</option>';
+            WADMKK_options_str  += '<option value="Sumbawa">Sumbawa</option>';
+            WADMKK_options_str  += '<option value="Sumbawa Barat">Sumbawa Barat</option>';
+            WADMKK_options_str  += '<option value="Sumedang">Sumedang</option>';
+            WADMKK_options_str  += '<option value="Sumenep">Sumenep</option>';
+            WADMKK_options_str  += '<option value="Supiori">Supiori</option>';
+            WADMKK_options_str  += '<option value="Tabalong">Tabalong</option>';
+            WADMKK_options_str  += '<option value="Tabanan">Tabanan</option>';
+            WADMKK_options_str  += '<option value="Takalar">Takalar</option>';
+            WADMKK_options_str  += '<option value="Tambrauw">Tambrauw</option>';
+            WADMKK_options_str  += '<option value="Tana Tidung">Tana Tidung</option>';
+            WADMKK_options_str  += '<option value="Tana Toraja">Tana Toraja</option>';
+            WADMKK_options_str  += '<option value="Tanah Bumbu">Tanah Bumbu</option>';
+            WADMKK_options_str  += '<option value="Tanah Datar">Tanah Datar</option>';
+            WADMKK_options_str  += '<option value="Tanah Laut">Tanah Laut</option>';
+            WADMKK_options_str  += '<option value="Tangerang">Tangerang</option>';
+            WADMKK_options_str  += '<option value="Tanggamus">Tanggamus</option>';
+            WADMKK_options_str  += '<option value="Tanjung Jabung Barat">Tanjung Jabung Barat</option>';
+            WADMKK_options_str  += '<option value="Tanjung Jabung Timur">Tanjung Jabung Timur</option>';
+            WADMKK_options_str  += '<option value="Tapanuli Selatan">Tapanuli Selatan</option>';
+            WADMKK_options_str  += '<option value="Tapanuli Tengah">Tapanuli Tengah</option>';
+            WADMKK_options_str  += '<option value="Tapanuli Utara">Tapanuli Utara</option>';
+            WADMKK_options_str  += '<option value="Tapin">Tapin</option>';
+            WADMKK_options_str  += '<option value="Tasikmalaya">Tasikmalaya</option>';
+            WADMKK_options_str  += '<option value="Tebo">Tebo</option>';
+            WADMKK_options_str  += '<option value="Tegal">Tegal</option>';
+            WADMKK_options_str  += '<option value="Teluk Bintuni">Teluk Bintuni</option>';
+            WADMKK_options_str  += '<option value="Teluk Wondama">Teluk Wondama</option>';
+            WADMKK_options_str  += '<option value="Temanggung">Temanggung</option>';
+            WADMKK_options_str  += '<option value="Timor Tengah Selatan">Timor Tengah Selatan</option>';
+            WADMKK_options_str  += '<option value="Timor Tengah Utara">Timor Tengah Utara</option>';
+            WADMKK_options_str  += '<option value="Toba">Toba</option>';
+            WADMKK_options_str  += '<option value="Tojo Una Una">Tojo Una Una</option>';
+            WADMKK_options_str  += '<option value="Toli Toli">Toli Toli</option>';
+            WADMKK_options_str  += '<option value="Tolikara">Tolikara</option>';
+            WADMKK_options_str  += '<option value="Toraja Utara">Toraja Utara</option>';
+            WADMKK_options_str  += '<option value="Trenggalek">Trenggalek</option>';
+            WADMKK_options_str  += '<option value="Tuban">Tuban</option>';
+            WADMKK_options_str  += '<option value="Tulang Bawang">Tulang Bawang</option>';
+            WADMKK_options_str  += '<option value="Tulang Bawang Barat">Tulang Bawang Barat</option>';
+            WADMKK_options_str  += '<option value="Tulungagung">Tulungagung</option>';
+            WADMKK_options_str  += '<option value="Wajo">Wajo</option>';
+            WADMKK_options_str  += '<option value="Wakatobi">Wakatobi</option>';
+            WADMKK_options_str  += '<option value="Waropen">Waropen</option>';
+            WADMKK_options_str  += '<option value="Way Kanan">Way Kanan</option>';
+            WADMKK_options_str  += '<option value="Wonogiri">Wonogiri</option>';
+            WADMKK_options_str  += '<option value="Wonosobo">Wonosobo</option>';
+            WADMKK_options_str  += '<option value="Yahukimo">Yahukimo</option>';
+            WADMKK_options_str  += '<option value="Yalimo">Yalimo</option>';
+            sel_WADMKK.innerHTML = WADMKK_options_str;
+            div_WADMKK.appendChild(sel_WADMKK);
+            var lab_WADMKK = document.createElement('div');
+            lab_WADMKK.innerHTML = 'WADMKK';
+            lab_WADMKK.className = 'filterlabel';
+            div_WADMKK.appendChild(lab_WADMKK);
+            var reset_WADMKK = document.createElement('div');
+            reset_WADMKK.innerHTML = 'clear filter';
+            reset_WADMKK.className = 'filterlabel';
+            reset_WADMKK.onclick = function() {
+                var options = document.getElementById("sel_WADMKK").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_WADMKK.appendChild(reset_WADMKK);
+        </script>
+    </body>
+</html>
